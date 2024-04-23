@@ -1,3 +1,4 @@
+from assignment import Assignment, Submission
 from course import CourseManager, Course
 
 def test_create_course_successful():
@@ -50,3 +51,11 @@ def test_create_assignment_successful():
 
   assert assignment_id is not None
   assert assignment_id in [assignment.assignment_id for assignment in  course.assignment_list]
+
+def test_submit_assignment_successful():
+  assignment = Assignment(1, "04/25/2024", 1)
+  submission = Submission(1, "Sample content")
+
+  assignment.submit(submission)
+
+  assert submission in assignment.submission_list
