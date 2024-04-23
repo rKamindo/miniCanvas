@@ -6,6 +6,9 @@ class CourseManager:
         self.counter = 0
 
     def create_a_course(self, course_code, semester, teacher_list):
+        if not course_code:
+            return 
+
         ## automatically generate a courseId
         new_course_id = self.generate_id()
         new_course = Course(new_course_id, course_code, semester, teacher_list)
