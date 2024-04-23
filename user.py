@@ -8,9 +8,12 @@ class UserManager:
         return self.counter
     
     def create_a_user(self, name, password, type):
+        if not name or not password or not type: # name password and type necessary
+            return
         new_user_id = self.generate_id()
         new_user = User(new_user_id, name, password, type)
         self.user_list.append(new_user)
+        return new_user_id
 
     def find_users(self, ids):
         users_found = []
