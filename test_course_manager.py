@@ -1,13 +1,24 @@
-from assignment import Assignment, Submission
-from course import CourseManager, Course
+from unittest import mock
 
-def test_create_course_successful():
-  course_manager = CourseManager()
-  course_id = course_manager.create_a_course("COSC381", "FALL2024", ["Prof. Jiang"])
+from pytest_mock import mocker
+from assignment import Assignment, Submission
+from course import Course, CourseManager
+from unittest.mock import patch
+from main import create_a_course
+
+
+@patch('user.UserManager.find_users')
+def test_create_course_successful(mock_find_users):
+  mock_teacher1 = mock.Mock(type="teacher")
+  mock_teacher2 = mock.Mock(type="teacher")
+  mock_find_users.return_value = [mock_teacher1, mock_teacher2]
+
+  course_id = create_a_course("COSC381", "FALL2024", [1, 2])
   
   assert course_id is not None
+  mock_find_users.assert_called_once_with([1, 2])
 
-  assert course_id in [course.course_id for course in course_manager.course_list]
+
 
 def test_create_course_without_code_unsuccessful():
   course_manager = CourseManager()

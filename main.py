@@ -1,14 +1,15 @@
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from typing import List
 from course import CourseManager, Course
 from user import UserManager
 from fastapi.security import APIKeyHeader
 
-coursemanager = CourseManager()
-usermanager = UserManager()
-usermanager.create_a_user("John", "pwd", "studnet")
-usermanager.create_a_user("Alice", "pwd", "teacher")
-usermanager.create_a_user("Jimmy", "pwd", "admin")
+user_manager = UserManager()
+course_manager = CourseManager()
+
+user_manager.create_a_user("John", "pwd", "student")
+user_manager.create_a_user("Alice", "pwd", "teacher")
+user_manager.create_a_user("Jimmy", "pwd", "admin")
 
 app = FastAPI()
 
@@ -19,13 +20,11 @@ def welcome():
 @app.post("/courses/{coursecode}")
 def create_a_course(coursecode: str, 
                     semester: str, 
-                    teacher_id_list: List[int]) -> int:
+                    teacher_id_list: List[int]
+    ) -> int:    
     ### an admin should create a course
-    teacher_list = usermanager.find_users(teacher_id_list)
-    course_id = coursemanager.create_a_course(coursecode, semester, teacher_list)
-    
-    course = coursemanager.find_a_course(course_id)
-    print(str(course.teacher_list[0]))
+    teacher_list = user_manager.find_users(teacher_id_list)
+    course_id = course_manager.create_a_course(coursecode, semester, teacher_list)
 
     return course_id
 
