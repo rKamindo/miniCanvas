@@ -1,31 +1,35 @@
 from unittest import mock
 
-from pytest_mock import mocker
 from assignment import Assignment, Submission
 from course import Course, CourseManager
 from unittest.mock import patch
-from main import create_a_course
+from main import create_a_course, import_students,  course_manager
+from user import User
 
 
 @patch('user.UserManager.find_users')
 def test_create_course_successful(mock_find_users):
-  mock_teacher1 = mock.Mock(type="teacher")
-  mock_teacher2 = mock.Mock(type="teacher")
+  mock_teacher1 = mock.Mock(spec=User, type="teacher")
+  mock_teacher2 = mock.Mock(spec=User, type="teacher")
   mock_find_users.return_value = [mock_teacher1, mock_teacher2]
 
   course_id = create_a_course("COSC381", "FALL2024", [1, 2])
   
   assert course_id is not None
   mock_find_users.assert_called_once_with([1, 2])
+  assert course_id in [course.course_id for course in course_manager.course_list]
 
 
 
-def test_create_course_without_code_unsuccessful():
-  course_manager = CourseManager()
-  course_id = course_manager.create_a_course("", "FALL2024", ["Prof. Jiang"])
+@patch('user.UserManager.find_users')
+def test_create_course_without_code_unsuccessful(mock_find_users):
+  mock_teacher1 = mock.Mock(spec=User, type="teacher")
+  mock_teacher2 = mock.Mock(spec=User, type="teacher")
+  mock_find_users.return_value = [mock_teacher1, mock_teacher2]
 
+  course_id = create_a_course("", "FALL2024", [1, 2])
+  
   assert course_id is None
-
   assert course_id not in [course.course_id for course in course_manager.course_list]
 
 def test_find_a_course_exists_successful():
@@ -46,14 +50,21 @@ def test_find_course_not_existing_return_none():
 
   assert actualCourse is None
 
-def test_import_students_successful():
-  course = Course(1, "COSC381", "FALL2024", ["Prof. Jiang"])
-  students = ["John", "James", "Mary"]
-  course.import_students(student_list=students)
+@patch('user.UserManager.find_users')
+@patch('course.CourseManager.find_a_course')
+def test_import_students_successful(mock_find_a_course, mock_find_users):
+  course = mock.Mock(spec=Course, course_id=1, course_code="COSC381", 
+                          semester="FALL2024", teacher_list=["Prof. Jiang"],
+                          student_list=[])
+  user1 = mock.Mock(spec=User, name="Randy", password="pwd", type="student")
+  user2 = mock.Mock(spec=User, name="James", password="pwd", type="student")
+  mock_find_a_course.return_value = course
+  mock_find_users.return_value = [user1, user2]
+  
+  import_students(1, [1, 2])
 
-  assert len(course.student_list) == 3
-  for student in students:
-    assert student in course.student_list  
+  mock_find_a_course.assert_called_once_with(1)
+  mock_find_users.assert_called_once_with([1, 2])
 
 def test_create_assignment_successful():
   course = Course(1, "COSC381", "FALL2024", ["Prof. Jiang"])

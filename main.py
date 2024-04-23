@@ -31,8 +31,8 @@ def create_a_course(coursecode: str,
 @app.put("/courses/{courseid}/students")
 def import_students(courseid: int,
                     student_id_list: List[int]) -> None:
-    course = coursemanager.find_a_course(courseid)
-    student_list = usermanager.find_users(student_id_list)
+    course = course_manager.find_a_course(courseid)
+    student_list = user_manager.find_users(student_id_list)
     course.import_students(student_list)
     
     print(course.course_id)
