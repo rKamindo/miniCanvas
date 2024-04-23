@@ -33,3 +33,12 @@ def test_find_course_not_existing_return_none():
   actualCourse = course_manager.find_a_course(1)
 
   assert actualCourse is None
+
+def test_import_students_successful():
+  course = Course(1, "COSC381", "FALL2024", "COSC381")
+  students = ["John", "James", "Mary"]
+  course.import_students(student_list=students)
+
+  assert len(course.student_list) == 3
+  for student in students:
+    assert student in course.student_list  
