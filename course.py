@@ -54,6 +54,7 @@ class Course:
         new_assignment = Assignment(new_assignment_id, 
                                     due_date, self.course_id)
         self.assignment_list.append(new_assignment)
+        return new_assignment_id
     
     def generate_assignment_id(self):
         self.assignment_counter += 1

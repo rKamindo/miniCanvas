@@ -35,10 +35,18 @@ def test_find_course_not_existing_return_none():
   assert actualCourse is None
 
 def test_import_students_successful():
-  course = Course(1, "COSC381", "FALL2024", "COSC381")
+  course = Course(1, "COSC381", "FALL2024", ["Prof. Jiang"])
   students = ["John", "James", "Mary"]
   course.import_students(student_list=students)
 
   assert len(course.student_list) == 3
   for student in students:
     assert student in course.student_list  
+
+def test_create_assignment_successful():
+  course = Course(1, "COSC381", "FALL2024", ["Prof. Jiang"])
+
+  assignment_id = course.create_an_assignment("04/25/2024")
+
+  assert assignment_id is not None
+  assert assignment_id in [assignment.assignment_id for assignment in  course.assignment_list]
