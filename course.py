@@ -6,6 +6,9 @@ class CourseManager:
         self.counter = 0
 
     def create_a_course(self, course_code, semester, teacher_list):
+        if not course_code:
+            return 
+
         ## automatically generate a courseId
         new_course_id = self.generate_id()
         new_course = Course(new_course_id, course_code, semester, teacher_list)
@@ -51,6 +54,7 @@ class Course:
         new_assignment = Assignment(new_assignment_id, 
                                     due_date, self.course_id)
         self.assignment_list.append(new_assignment)
+        return new_assignment_id
     
     def generate_assignment_id(self):
         self.assignment_counter += 1
